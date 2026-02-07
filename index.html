@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Ark Grid Calculator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0f1115;
+      --bg-panel: rgba(26, 30, 36, 0.96);
+      --bg-panel-2: rgba(16, 18, 22, 0.92);
+      --bg-input: rgba(8, 9, 11, 0.9);
+
+      --la-gold: #c2a076;
+      --la-gold-dim: #7d6b49;
+      --la-highlight: #ffebb8;
+
+      --la-silver: #aebcd1;
+      --text-main: #e1e6eb;
+      --text-muted: #8a96a3;
+      --text-gold: #e6cc9c;
+
+      --border: rgba(255, 255, 255, 0.08);
+      --border-2: rgba(255, 255, 255, 0.06);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+
+      --radius: 14px;
+      --radius-sm: 10px;
+
+      --gap: 20px;
+
+      --aura-class: rgba(255, 120, 120, 0.12);
+      --aura-general: rgba(120, 175, 255, 0.12);
+
+      --rar-legendary: #d48f45;
+      --rar-relic: #b56b33;
+      --rar-ancient: #d6c25b;
+    }
+
+    [data-theme="light"] {
+      --bg-dark: #f4f6fa;
+      --bg-panel: rgba(255, 255, 255, 0.92);
+      --bg-panel-2: rgba(250, 251, 253, 0.92);
+      --bg-input: rgba(245, 247, 250, 0.95);
+
+      --text-main: #1b2230;
+      --text-muted: rgba(27, 34, 48, 0.62);
+      --text-gold: rgba(56, 44, 30, 0.92);
+
+      --border: rgba(27, 34, 48, 0.12);
+      --border-2: rgba(27, 34, 48, 0.10);
+      --shadow: 0 10px 26px rgba(15, 20, 30, 0.12);
+
+      --aura-class: rgba(255, 120, 120, 0.10);
+      --aura-general: rgba(120, 175, 255, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      margin: 0;
+      padding: 26px;
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(70, 82, 102, 0.38) 0%, rgba(15, 17, 21, 0.92) 68%),
+        radial-gradient(circle at 0% 100%, rgba(194, 160, 118, 0.08) 0%, transparent 50%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    [data-theme="light"] body {
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(70, 82, 102, 0.12) 0%, rgba(244, 246, 250, 0.96) 70%),
+        radial-gradient(circle at 0% 100%, rgba(194, 160, 118, 0.08) 0%, transparent 55%);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    .section-title,
+    .res-title {
+      font-family: 'Cinzel', serif;
+      color: var(--text-gold);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+      letter-spacing: 0.5px;
+    }
+
+    [data-theme="light"] h1,
+    [data-theme="light"] h2,
+    [data-theme="light"] h3,
+    [data-theme="light"] .section-title,
+    [data-theme="light"] .res-title {
+      text-shadow: none;
+    }
+
+    .topbar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 30px;
+      text-align: center;
+      padding: 14px 0 18px;
+      margin: 0;
+      border-bottom: 1px solid rgba(194, 160, 118, 0.22);
+      background: linear-gradient(to right, transparent, rgba(194, 160, 118, 0.12), transparent);
+      border-radius: 12px;
+    }
+
+    p.note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-style: italic;
+      margin: 0 0 4px;
+    }
+
+    .how-to-use {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-style: italic;
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+      margin: 0 0 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      font-family: 'Cinzel', serif;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(42, 46, 51, 0.7) 0%, rgba(24, 26, 29, 0.65) 100%);
+      color: var(--text-main);
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    [data-theme="light"] .icon-btn {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 247, 250, 0.85) 100%);
+      box-shadow: 0 10px 22px rgba(15, 20, 30, 0.08);
+    }
+
+    .icon-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(194, 160, 118, 0.45);
+    }
+
+    .icon-btn:active {
+      transform: translateY(0px);
+    }
+
+    .page {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+      align-items: start;
+    }
+
+    .half {
+      padding: 18px 18px 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(26, 30, 36, 0.98), rgba(18, 20, 24, 0.9));
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    [data-theme="light"] .half {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(250, 251, 253, 0.9));
+      box-shadow: var(--shadow);
+    }
+
+    .half::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(194, 160, 118, 0.55), transparent);
+      opacity: 0.7;
+    }
+
+    .left {
+      outline: 1px solid rgba(138, 75, 75, 0.18);
+    }
+
+    .right {
+      outline: 1px solid rgba(75, 107, 138, 0.18);
+    }
+
+    .section-title {
+      font-weight: 700;
+      margin: 2px 0 14px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    [data-theme="light"] .section-title::after {
+      background: rgba(27, 34, 48, 0.10);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      margin-bottom: 14px;
+    }
+
+    thead th {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      color: rgba(138, 150, 163, 0.95);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0 6px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    [data-theme="light"] thead th {
+      color: rgba(27, 34, 48, 0.62);
+      border-bottom-color: rgba(27, 34, 48, 0.12);
+    }
+
+    tbody td {
+      padding: 8px 8px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    [data-theme="light"] tbody td {
+      background: rgba(27, 34, 48, 0.04);
+      border-color: rgba(27, 34, 48, 0.10);
+    }
+
+    tbody tr:hover td {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="light"] tbody tr:hover td {
+      background: rgba(27, 34, 48, 0.06);
+    }
+
+    tbody td:first-child {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+
+    tbody td:last-child {
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    input[type=number],
+    select {
+      background: var(--bg-input);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--la-gold);
+      padding: 7px 8px;
+      font-family: 'Lato', sans-serif;
+      text-align: center;
+      width: 70px;
+      border-radius: 10px;
+      transition: all 0.18s ease;
+    }
+
+    [data-theme="light"] input[type=number],
+    [data-theme="light"] select {
+      border-color: rgba(27, 34, 48, 0.14);
+      color: rgba(56, 44, 30, 0.92);
+    }
+
+    select {
+      width: auto;
+      min-width: 160px;
+      text-align: left;
+    }
+
+    input[type=number]:focus,
+    select:focus {
+      outline: none;
+      border-color: rgba(194, 160, 118, 0.65);
+      box-shadow: 0 0 0 3px rgba(194, 160, 118, 0.12);
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .gem-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      letter-spacing: .02em;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.22);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.45);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    [data-theme="light"] .gem-dot:not(.gem-A):not(.gem-B):not(.gem-C):not(.gem-D):not(.gem-E):not(.gem-F):not(.gem-G):not(.gem-H):not(.gem-K):not(.gem-L) {
+      background: rgba(255, 255, 255, 0.65);
+      border-color: rgba(27, 34, 48, 0.14);
+      box-shadow: inset 0 0 10px rgba(27, 34, 48, 0.06);
+      color: rgba(27, 34, 48, 0.92);
+      text-shadow: none;
+    }
+
+    [data-theme="light"] .gem-dot.gem-A,
+    [data-theme="light"] .gem-dot.gem-B,
+    [data-theme="light"] .gem-dot.gem-C,
+    [data-theme="light"] .gem-dot.gem-D,
+    [data-theme="light"] .gem-dot.gem-E,
+    [data-theme="light"] .gem-dot.gem-F,
+    [data-theme="light"] .gem-dot.gem-G,
+    [data-theme="light"] .gem-dot.gem-H,
+    [data-theme="light"] .gem-dot.gem-K,
+    [data-theme="light"] .gem-dot.gem-L {
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+      filter: saturate(1.15) contrast(1.05);
+    }
+
+    .core-config {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+    }
+
+    [data-theme="light"] .core-config {
+      background: rgba(27, 34, 48, 0.04);
+      border-color: rgba(27, 34, 48, 0.10);
+    }
+
+    .core-config label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .target-wrap select {
+      min-width: 96px;
+      text-align: center;
+    }
+
+    .core-accordion {
+      display: contents;
+    }
+
+    .core-acc {
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.18);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    [data-theme="light"] .core-acc {
+      border-color: rgba(27, 34, 48, 0.10);
+      background: rgba(27, 34, 48, 0.03);
+    }
+
+    .core-acc summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .core-acc summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .core-acc .acc-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Cinzel', serif;
+      color: var(--text-gold);
+    }
+
+    .core-acc .acc-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .core-acc .acc-body {
+      padding: 0 12px 12px;
+    }
+
+    .rarity-select {
+      color: var(--la-gold) !important;
+    }
+
+    [data-theme="light"] .rarity-select {
+      color: rgba(56, 44, 30, 0.92) !important;
+    }
+
+    button {
+      font-family: 'Cinzel', serif;
+      padding: 11px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(194, 160, 118, 0.28);
+      background: linear-gradient(180deg, rgba(43, 38, 32, 1) 0%, rgba(26, 23, 18, 1) 100%);
+      color: var(--text-gold);
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+      min-width: 120px;
+    }
+
+    [data-theme="light"] button {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 247, 250, 0.85) 100%);
+      box-shadow: 0 10px 22px rgba(15, 20, 30, 0.10);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(194, 160, 118, 0.6);
+      color: var(--la-highlight);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
+    }
+
+    [data-theme="light"] button:hover {
+      box-shadow: 0 14px 28px rgba(15, 20, 30, 0.12);
+    }
+
+    button:active {
+      transform: translateY(0px);
+    }
+
+    .panel-btn-row {
+      margin-top: auto;
+      padding-top: 14px;
+      display: flex;
+    }
+
+    .panel-btn-row button {
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .common-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.32);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius);
+      flex-wrap: wrap;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+    }
+
+    [data-theme="light"] .common-controls {
+      background: rgba(255, 255, 255, 0.72);
+      border-color: rgba(27, 34, 48, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(27, 34, 48, 0.04);
+    }
+
+    .common-controls button {
+      width: 190px;
+      min-width: 190px;
+    }
+
+    .common-controls>div[style*="width:10px"],
+    .common-controls>div[style*="width:20px"] {
+      display: none !important;
+    }
+
+    button.secondary {
+      background: linear-gradient(180deg, rgba(42, 46, 51, 1) 0%, rgba(24, 26, 29, 1) 100%);
+      border-color: rgba(174, 188, 209, 0.22);
+      color: var(--la-silver);
+    }
+
+    [data-theme="light"] button.secondary {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 247, 250, 0.9) 100%);
+      color: rgba(27, 34, 48, 0.85);
+      border-color: rgba(27, 34, 48, 0.16);
+    }
+
+    button.secondary:hover {
+      border-color: rgba(225, 230, 235, 0.55);
+      color: #fff;
+    }
+
+    [data-theme="light"] button.secondary:hover {
+      color: rgba(27, 34, 48, 0.92);
+    }
+
+    button.primary-gold {
+      background: linear-gradient(180deg, rgba(94, 61, 61, 1) 0%, rgba(58, 31, 31, 1) 100%);
+      border-color: rgba(138, 75, 75, 0.55);
+      color: var(--la-highlight);
+      box-shadow: 0 10px 24px rgba(138, 75, 75, 0.22);
+    }
+
+    [data-theme="light"] button.primary-gold {
+      background: linear-gradient(180deg, rgba(255, 240, 230, 0.95) 0%, rgba(255, 248, 242, 0.9) 100%);
+      border-color: rgba(138, 75, 75, 0.30);
+      color: rgba(110, 42, 42, 0.95);
+      box-shadow: 0 14px 30px rgba(138, 75, 75, 0.12);
+    }
+
+    button.primary-gold:hover {
+      box-shadow: 0 14px 32px rgba(138, 75, 75, 0.28);
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      display: block;
+    }
+
+    #resultsArea {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+    }
+
+    .results-half {
+      background: linear-gradient(180deg, rgba(26, 30, 36, 0.98), rgba(16, 18, 22, 0.9));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 18px;
+      border-radius: var(--radius);
+      position: relative;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    [data-theme="light"] .results-half {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(250, 251, 253, 0.9));
+      border-color: rgba(27, 34, 48, 0.12);
+      box-shadow: var(--shadow);
+    }
+
+    .core-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 260px;
+    }
+
+    .core-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .core-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .core-kicker {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      letter-spacing: .06em;
+      line-height: 1.1;
+    }
+
+    .core-gems {
+      font-size: 12px;
+      color: rgba(225, 230, 235, 0.62);
+    }
+
+    .core-sub {
+      font-size: 12px;
+      color: rgba(225, 230, 235, 0.72);
+    }
+
+    :root {
+      --core-kicker-dark: rgba(255, 235, 184, 0.92);
+      --core-kicker-light: rgba(26, 28, 34, 0.78);
+
+      --leg-core: 255, 168, 72;
+      --rel-core: 204, 114, 36;
+      --anc-core: 238, 200, 92;
+    }
+
+    [data-theme="dark"] .core-kicker {
+      color: var(--core-kicker-dark);
+    }
+
+    [data-theme="light"] .core-kicker {
+      color: var(--core-kicker-light);
+    }
+
+    [data-theme="light"] .core-gems {
+      color: rgba(26, 28, 34, 0.55);
+    }
+
+    [data-theme="light"] .core-sub {
+      color: rgba(26, 28, 34, 0.62);
+    }
+
+    .core-coin {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.22));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        inset 0 0 10px rgba(0, 0, 0, 0.28),
+        0 10px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    .core-coin::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      pointer-events: none;
+    }
+
+    .core-coin svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      color: rgba(235, 240, 248, 0.88);
+      fill: currentColor;
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+    }
+
+    .coin-Legendary {
+      border-color: rgba(var(--leg-core), 0.55);
+      box-shadow:
+        inset 0 0 12px rgba(var(--leg-core), 0.22),
+        0 0 16px rgba(var(--leg-core), 0.34),
+        0 0 34px rgba(var(--leg-core), 0.18),
+        0 10px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    .coin-Legendary svg {
+      color: rgba(var(--leg-core), 0.95);
+    }
+
+    .coin-Relic {
+      border-color: rgba(var(--rel-core), 0.55);
+      box-shadow:
+        inset 0 0 12px rgba(var(--rel-core), 0.20),
+        0 0 16px rgba(var(--rel-core), 0.30),
+        0 0 34px rgba(var(--rel-core), 0.16),
+        0 10px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    .coin-Relic svg {
+      color: rgba(var(--rel-core), 0.95);
+    }
+
+    .coin-Ancient {
+      border-color: rgba(var(--anc-core), 0.55);
+      box-shadow:
+        inset 0 0 12px rgba(var(--anc-core), 0.22),
+        0 0 16px rgba(var(--anc-core), 0.34),
+        0 0 34px rgba(var(--anc-core), 0.18),
+        0 10px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    .coin-Ancient svg {
+      color: rgba(var(--anc-core), 0.95);
+    }
+
+    [data-theme="light"] .coin-Legendary,
+    [data-theme="light"] .coin-Relic,
+    [data-theme="light"] .coin-Ancient {
+      box-shadow:
+        inset 0 0 10px rgba(0, 0, 0, 0.10),
+        0 8px 16px rgba(0, 0, 0, 0.10);
+    }
+
+    .rarity-pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.16);
+      color: rgba(225, 230, 235, 0.90);
+      line-height: 1;
+    }
+
+    .pill-Legendary {
+      border-color: rgba(var(--leg-core), 0.40);
+      color: rgba(var(--leg-core), 0.95);
+    }
+
+    .pill-Relic {
+      border-color: rgba(var(--rel-core), 0.40);
+      color: rgba(var(--rel-core), 0.95);
+    }
+
+    .pill-Ancient {
+      border-color: rgba(var(--anc-core), 0.40);
+      color: rgba(var(--anc-core), 0.95);
+    }
+
+    [data-theme="light"] .rarity-pill {
+      background: rgba(255, 255, 255, 0.50);
+      color: rgba(26, 28, 34, 0.78);
+    }
+
+    [data-theme="light"] .results-half {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 246, 248, 0.86));
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="light"] .core-box {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(245, 246, 248, 0.68));
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.06);
+    }
+
+    [data-theme="light"] .core-header {
+      border-bottom-color: rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="light"] .core-header strong {
+      color: rgba(38, 32, 24, 0.92);
+    }
+
+    [data-theme="light"] .core-kicker {
+      color: rgba(38, 32, 24, 0.92);
+    }
+
+    [data-theme="light"] .core-gems {
+      color: rgba(38, 32, 24, 0.55);
+    }
+
+    [data-theme="light"] .core-sub {
+      color: rgba(38, 32, 24, 0.62);
+    }
+
+    [data-theme="light"] .meta-right .small {
+      color: rgba(38, 32, 24, 0.92) !important;
+    }
+
+    [data-theme="light"] .progress-wrap {
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    #classResults::after,
+    #generalResults::after {
+      content: "";
+      position: absolute;
+      inset: -40% -30%;
+      background: radial-gradient(circle at 22% 35%, var(--aura-class) 0%, transparent 55%);
+      pointer-events: none;
+      filter: blur(0px);
+      opacity: 0.9;
+    }
+
+    #generalResults::after {
+      background: radial-gradient(circle at 22% 35%, var(--aura-general) 0%, transparent 55%);
+    }
+
+    .results-half::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(194, 160, 118, 0.09) 0%, transparent 42%);
+      pointer-events: none;
+    }
+
+    .core-box {
+      margin-bottom: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.26));
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.45);
+    }
+
+    [data-theme="light"] .core-box {
+      border-color: rgba(27, 34, 48, 0.12);
+      background: linear-gradient(180deg, rgba(27, 34, 48, 0.02), rgba(27, 34, 48, 0.06));
+      box-shadow: inset 0 0 16px rgba(27, 34, 48, 0.06);
+    }
+
+    #classResults .core-box {
+      box-shadow:
+        inset 0 0 18px rgba(0, 0, 0, 0.45),
+        0 0 22px rgba(255, 160, 80, 0.08);
+    }
+
+    #generalResults .core-box {
+      box-shadow:
+        inset 0 0 18px rgba(0, 0, 0, 0.45),
+        0 0 22px rgba(120, 190, 255, 0.08);
+    }
+
+    .core-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    [data-theme="light"] .core-header {
+      border-bottom-color: rgba(27, 34, 48, 0.10);
+    }
+
+    .core-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .core-orb {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.45)),
+        radial-gradient(circle at 50% 60%, rgba(194, 160, 118, 0.18), transparent 55%);
+      box-shadow:
+        inset 0 0 18px rgba(0, 0, 0, 0.55),
+        0 10px 18px rgba(0, 0, 0, 0.25);
+      flex: 0 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    [data-theme="light"] .core-orb {
+      border-color: rgba(27, 34, 48, 0.16);
+      box-shadow:
+        inset 0 0 14px rgba(27, 34, 48, 0.10),
+        0 10px 18px rgba(15, 20, 30, 0.08);
+    }
+
+    .core-orb::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.45), transparent 55%);
+      transform: rotate(18deg);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .orb-legendary {
+      border-color: rgba(212, 143, 69, 0.55);
+    }
+
+    .orb-relic {
+      border-color: rgba(181, 107, 51, 0.55);
+    }
+
+    .orb-ancient {
+      border-color: rgba(214, 194, 91, 0.55);
+    }
+
+    .orb-icon {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+    }
+
+    [data-theme="light"] .orb-icon {
+      color: rgba(27, 34, 48, 0.92);
+      text-shadow: none;
+    }
+
+    .core-title {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .core-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .core-header strong {
+      color: var(--la-highlight);
+      font-family: 'Cinzel', serif;
+    }
+
+    .meta-right {
+      text-align: right;
+      min-width: 210px;
+    }
+
+    .progress-wrap {
+      margin-top: 6px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    [data-theme="light"] .progress-wrap {
+      background: rgba(27, 34, 48, 0.06);
+      border-color: rgba(27, 34, 48, 0.10);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(194, 160, 118, 0.35), rgba(255, 235, 184, 0.65));
+      border-radius: 999px;
+    }
+
+    .gem-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.26);
+      padding: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.45);
+    }
+
+    [data-theme="light"] .gem-row {
+      background: rgba(27, 34, 48, 0.04);
+      border-color: rgba(27, 34, 48, 0.10);
+    }
+
+    .gem-card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+
+      width: 76px;
+      height: 76px;
+      padding: 4px;
+
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+
+      border-radius: 999px;
+
+      position: relative;
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.75), 0 8px 14px rgba(0, 0, 0, 0.28);
+      text-shadow: 0 1px 2px #000;
+    }
+
+    [data-theme="light"] .gem-card {
+      box-shadow: inset 0 0 10px rgba(27, 34, 48, 0.08), 0 10px 18px rgba(15, 20, 30, 0.10);
+      text-shadow: none;
+    }
+
+    .gem-A {
+      background: radial-gradient(circle at 30% 30%, #ff5252, #8a2b2b);
+      border-color: #ff8a8a;
+    }
+
+    .gem-B {
+      background: radial-gradient(circle at 30% 30%, #ff8c42, #8f4b16);
+      border-color: #ffb580;
+    }
+
+    .gem-C {
+      background: radial-gradient(circle at 30% 30%, #ffd54f, #94720d);
+      border-color: #ffe082;
+    }
+
+    .gem-D {
+      background: radial-gradient(circle at 30% 30%, #9ccc65, #4a6624);
+      border-color: #c5e1a5;
+    }
+
+    .gem-E {
+      background: radial-gradient(circle at 30% 30%, #4caf50, #1b5e20);
+      border-color: #81c784;
+    }
+
+    .gem-F {
+      background: radial-gradient(circle at 30% 30%, #26a69a, #004d40);
+      border-color: #80cbc4;
+    }
+
+    .gem-G {
+      background: radial-gradient(circle at 30% 30%, #29b6f6, #01579b);
+      border-color: #81d4fa;
+    }
+
+    .gem-H {
+      background: radial-gradient(circle at 30% 30%, #3f51b5, #1a237e);
+      border-color: #7986cb;
+    }
+
+    .gem-K {
+      background: radial-gradient(circle at 30% 30%, #9c27b0, #4a148c);
+      border-color: #ce93d8;
+    }
+
+    .gem-L {
+      background: radial-gradient(circle at 30% 30%, #78909c, #37474f);
+      border-color: #b0bec5;
+    }
+
+    .gem-type {
+      font-size: 20px;
+      font-family: 'Cinzel', serif;
+    }
+
+    .gem-sub {
+      font-size: 10px;
+      font-weight: 400;
+      opacity: 0.92;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge {
+      background: rgba(0, 0, 0, 0.45);
+      color: rgba(225, 230, 235, 0.85);
+      padding: 5px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 11px;
+      display: inline-block;
+      border-radius: 999px;
+    }
+
+    [data-theme="light"] .badge {
+      background: rgba(27, 34, 48, 0.04);
+      border-color: rgba(27, 34, 48, 0.12);
+      color: rgba(27, 34, 48, 0.78);
+    }
+
+    .remaining-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .suggest-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .suggest-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(0, 0, 0, 0.22);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.35);
+    }
+
+    [data-theme="light"] .suggest-pill {
+      background: rgba(27, 34, 48, 0.04);
+      border-color: rgba(27, 34, 48, 0.12);
+      box-shadow: inset 0 0 12px rgba(27, 34, 48, 0.06);
+    }
+
+    .suggest-pill .qty {
+      font-size: 12px;
+      color: rgba(225, 230, 235, 0.75);
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    [data-theme="light"] .suggest-pill .qty {
+      color: rgba(27, 34, 48, 0.70);
+    }
+
+    .unused-block {
+      margin-top: 10px;
+      padding: 10px 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.16);
+    }
+
+    [data-theme="light"] .unused-block {
+      border-color: rgba(27, 34, 48, 0.12);
+      background: rgba(27, 34, 48, 0.03);
+    }
+
+    .unused-block summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .unused-block summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .unused-title {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .unused-title .sigil {
+      color: rgba(194, 160, 118, 0.85);
+    }
+
+    .unused-hint {
+      color: rgba(225, 230, 235, 0.55);
+      font-size: 12px;
+    }
+
+    [data-theme="light"] .unused-hint {
+      color: rgba(27, 34, 48, 0.50);
+    }
+
+    @media (max-width: 980px) {
+      body {
+        padding: 18px;
+      }
+
+      .page,
+      #resultsArea {
+        grid-template-columns: 1fr;
+      }
+
+      .core-config {
+        display: none;
+      }
+
+      .core-accordion {
+        display: block;
+      }
+
+      .meta-right {
+        min-width: 0;
+      }
+    }
+
+    @media (min-width: 981px) {
+      .core-accordion {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="topbar">
+      <div class="topbar-row">
+        <div style="flex:1"></div>
+        <h1 style="flex:2">Ark Grid Calculator</h1>
+        <div style="flex:1; display:flex; justify-content:flex-end; gap:8px;">
+          <button class="icon-btn" id="langToggle" type="button" aria-label="Toggle language">
+            <span id="langText">RU</span>
+          </button>
+          <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle theme">
+            <span id="themeIcon">🌙</span>
+            <span id="themeText">Dark</span>
+          </button>
+        </div>
+      </div>
+      <p class="note">Manage your nodes. Optimize your Ark Passive. <a
+          href="https://github.com/azizcanv/L-ark-grid-calculator/blob/main/README.md" class="how-to-use"
+          target="_blank">HOW TO USE</a></p>
+    </div>
+
+    <div class="page">
+      <div class="half left">
+        <h2 class="section-title">Order Astrogems</h2>
+
+        <table aria-label="Order astrogems inventory">
+          <thead>
+            <tr>
+              <th>Gem</th>
+              <th>Will</th>
+              <th>Pts</th>
+              <th>Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="gem-dot gem-A">A</span></td>
+              <td>3</td>
+              <td>5</td>
+              <td><input id="class_A" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-B">B</span></td>
+              <td>3</td>
+              <td>4</td>
+              <td><input id="class_B" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-C">C</span></td>
+              <td>3</td>
+              <td>3</td>
+              <td><input id="class_C" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-D">D</span></td>
+              <td>4</td>
+              <td>5</td>
+              <td><input id="class_D" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-E">E</span></td>
+              <td>4</td>
+              <td>4</td>
+              <td><input id="class_E" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-F">F</span></td>
+              <td>4</td>
+              <td>3</td>
+              <td><input id="class_F" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-G">G</span></td>
+              <td>5</td>
+              <td>5</td>
+              <td><input id="class_G" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-H">H</span></td>
+              <td>5</td>
+              <td>4</td>
+              <td><input id="class_H" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-K">K</span></td>
+              <td>5</td>
+              <td>3</td>
+              <td><input id="class_K" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-L">L</span></td>
+              <td>6</td>
+              <td>5</td>
+              <td><input id="class_L" type="number" min="0" value="0"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.07); padding-bottom:10px;">
+          <label><input id="classAuto" type="checkbox" checked> Auto Target</label>
+          <span class="small" style="margin-top:6px;">Auto uses ideal targets (Relic/Ancient: 17, Legendary: 14)</span>
+        </div>
+
+        <div id="class_core_config"></div>
+        <div id="class_core_accordion" class="core-accordion"></div>
+
+        <div class="panel-btn-row">
+          <button onclick="calculateClass()">Calculate</button>
+        </div>
+      </div>
+
+      <div class="half right">
+        <h2 class="section-title">Chaos Astrogems</h2>
+
+        <table aria-label="Chaos astrogems inventory">
+          <thead>
+            <tr>
+              <th>Gem</th>
+              <th>Will</th>
+              <th>Pts</th>
+              <th>Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="gem-dot gem-A">A</span></td>
+              <td>3</td>
+              <td>5</td>
+              <td><input id="general_A" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-B">B</span></td>
+              <td>3</td>
+              <td>4</td>
+              <td><input id="general_B" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-C">C</span></td>
+              <td>3</td>
+              <td>3</td>
+              <td><input id="general_C" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-D">D</span></td>
+              <td>4</td>
+              <td>5</td>
+              <td><input id="general_D" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-E">E</span></td>
+              <td>4</td>
+              <td>4</td>
+              <td><input id="general_E" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-F">F</span></td>
+              <td>4</td>
+              <td>3</td>
+              <td><input id="general_F" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-G">G</span></td>
+              <td>5</td>
+              <td>5</td>
+              <td><input id="general_G" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-H">H</span></td>
+              <td>5</td>
+              <td>4</td>
+              <td><input id="general_H" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-K">K</span></td>
+              <td>5</td>
+              <td>3</td>
+              <td><input id="general_K" type="number" min="0" value="0"></td>
+            </tr>
+            <tr>
+              <td><span class="gem-dot gem-L">L</span></td>
+              <td>6</td>
+              <td>5</td>
+              <td><input id="general_L" type="number" min="0" value="0"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.07); padding-bottom:10px;">
+          <label><input id="generalAuto" type="checkbox" checked> Auto Target</label>
+          <span class="small" style="margin-top:6px;">Auto uses ideal targets (Relic/Ancient: 17, Legendary: 14)</span>
+        </div>
+
+        <div id="general_core_config"></div>
+        <div id="general_core_accordion" class="core-accordion"></div>
+
+        <div class="panel-btn-row">
+          <button onclick="calculateGeneral()">Calculate</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="common-controls">
+      <button class="secondary" onclick="saveInventory()">Save Inventory</button>
+      <button class="secondary" onclick="loadInventory()">Load Inventory</button>
+      <div style="width:10px;"></div>
+      <button class="secondary" onclick="resetDefaults()">Reset Data</button>
+      <button class="primary-gold" onclick="calculateBoth()">Calculate Both</button>
+    </div>
+
+    <div id="resultsArea">
+      <div class="results-half" id="classResults">
+        <h3 class="res-title">Order Optimization</h3>
+        <div id="classResultsInner" class="small">Pending calculation...</div>
+      </div>
+
+      <div class="results-half" id="generalResults">
+        <h3 class="res-title">Chaos Optimization</h3>
+        <div id="generalResultsInner" class="small">Pending calculation...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    const TRANSLATIONS = {
+      en: {
+        appTitle: "Ark Grid Calculator",
+        subtitle: "Manage your nodes. Optimize your Ark Passive.",
+        howToUse: "HOW TO USE",
+
+        orderSection: "Order Astrogems",
+        chaosSection: "Chaos Astrogems",
+
+        gem: "Gem",
+        will: "Will",
+        pts: "Pts",
+        qty: "Qty",
+
+        autoTarget: "Auto Target",
+        autoTargetHint: "Auto uses ideal targets (Relic/Ancient: 17, Legendary: 14)",
+
+        coreType: "Core {0} Type:",
+        target: "Target:",
+
+        legendary: "Legendary",
+        relic: "Relic",
+        ancient: "Ancient",
+        legendaryWP: "Legendary (12 WP)",
+        relicWP: "Relic (15 WP)",
+        ancientWP: "Ancient (17 WP)",
+
+        calculate: "Calculate",
+        saveInventory: "Save Inventory",
+        loadInventory: "Load Inventory",
+        resetData: "Reset Data",
+        calculateBoth: "Calculate Both",
+
+        orderOptimization: "Order Optimization",
+        chaosOptimization: "Chaos Optimization",
+        pendingCalculation: "Pending calculation...",
+        noValidCombos: "No valid combos found (or inventory empty).",
+
+        dark: "Dark",
+        light: "Light",
+        toggleTheme: "Toggle theme",
+
+        core: "Core",
+        willpowerCap: "Willpower cap:",
+        wpLabel: "WP:",
+        ptsLabel: "Pts:",
+        targetLabel: "Target:",
+        unusedGems: "Unused Gems",
+        tapToExpand: "Tap to expand",
+        none: "None",
+
+        craftSuggestionReach: "Add / Craft Suggestion (reach all targets)",
+        craftSuggestion: "Add / Craft Suggestion",
+        missing: "Missing:",
+        minimalAddSearch: "Minimal-add search, up to 8 extra gems.",
+        couldntGuarantee: "Couldn't guarantee full-target within the current search limit (max 8 extra gems).",
+
+        inventorySaved: "Inventory saved to browser storage.",
+        noSavedInventory: "No saved inventory found.",
+        inventoryLoaded: "Inventory loaded.",
+        failedToLoad: "Failed to load inventory.",
+        dataReset: "Data reset.",
+
+        readmeUrl: "https://github.com/azizcanv/L-ark-grid-calculator/blob/main/README.md"
+      },
+
+      ru: {
+        appTitle: "Калькулятор Арк Грида",
+        subtitle: "Управляйте узлами. Оптимизируйте Арк Пассив.",
+        howToUse: "КАК ИСПОЛЬЗОВАТЬ",
+
+        orderSection: "Руниты Порядка",
+        chaosSection: "Руниты Хаоса",
+
+        gem: "Рунит",
+        will: "Заряд",
+        pts: "Очки",
+        qty: "Кол-во",
+
+        autoTarget: "Автоматический выбор цели",
+        autoTargetHint: "Авто использует идеальные цели (Реликвия/Древнее: 17, Легендарное: 14)",
+
+        coreType: "Тип Ядра {0}:",
+        target: "Цель:",
+
+        legendary: "Легендарное",
+        relic: "Реликвия",
+        ancient: "Древнее",
+        legendaryWP: "Легендарное (макс. заряд: 14)",
+        relicWP: "Реликвия (макс. заряд: 15)",
+        ancientWP: "Древнее (макс. заряд: 17)",
+
+        calculate: "Рассчитать",
+        saveInventory: "Сохранить Инвентарь",
+        loadInventory: "Загрузить Инвентарь",
+        resetData: "Сброс",
+        calculateBoth: "Рассчитать Оба",
+
+        orderOptimization: "Оптимизация Порядка",
+        chaosOptimization: "Оптимизация Хаоса",
+        pendingCalculation: "Ожидание расчета...",
+        noValidCombos: "Не найдено подходящих комбинаций (или инвентарь пуст).",
+
+        dark: "Тёмная",
+        light: "Светлая",
+        toggleTheme: "Переключить тему",
+
+        core: "Ядро",
+        willpowerCap: "Макс. заряд:",
+        wpLabel: "Заряд:",
+        ptsLabel: "Очки:",
+        targetLabel: "Цель:",
+        unusedGems: "Неиспользованные Руниты",
+        tapToExpand: "Нажмите для раскрытия",
+        none: "Нет",
+
+        craftSuggestionReach: "Добавить / Создать Предложение (достичь всех целей)",
+        craftSuggestion: "Добавить / Создать Предложение",
+        missing: "Не хватает:",
+        minimalAddSearch: "Минимальный поиск добавления, до 8 дополнительных рунитов.",
+        couldntGuarantee: "Не удалось гарантировать полную цель в пределах текущего лимита поиска (макс. 8 дополнительных рунитов).",
+
+        inventorySaved: "Инвентарь сохранен в хранилище браузера.",
+        noSavedInventory: "Сохраненный инвентарь не найден.",
+        inventoryLoaded: "Инвентарь загружен.",
+        failedToLoad: "Не удалось загрузить инвентарь.",
+        dataReset: "Данные сброшены.",
+
+        readmeUrl: "https://github.com/azizcanv/L-ark-grid-calculator/blob/main/README.ru.md"
+      }
+    };
+
+    let currentLang = localStorage.getItem('ark_language') || 'ru';
+
+    function t(key, ...args) {
+      let text = TRANSLATIONS[currentLang]?.[key] || TRANSLATIONS.en[key] || key;
+      args.forEach((arg, i) => {
+        text = text.replace(`{${i}}`, arg);
+      });
+      return text;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      localStorage.setItem('ark_language', lang);
+      updateAllText();
+    }
+
+
+    const ASTROGEMS = {
+      A: { will: 3, points: 5 },
+      B: { will: 3, points: 4 },
+      C: { will: 3, points: 3 },
+      D: { will: 4, points: 5 },
+      E: { will: 4, points: 4 },
+      F: { will: 4, points: 3 },
+      G: { will: 5, points: 5 },
+      H: { will: 5, points: 4 },
+      K: { will: 5, points: 3 },
+      L: { will: 6, points: 5 }
+    };
+
+    const CORE_WILL = { Legendary: 12, Relic: 15, Ancient: 17 };
+    const CORE_TARGET_CAP = { Legendary: 14, Relic: 20, Ancient: 20 };
+    const CORE_IDEAL_TARGET = { Legendary: 14, Relic: 17, Ancient: 17 };
+    const MAX_SLOTS = 4;
+
+    const GEM_WEIGHT = {
+      A: 10, B: 9, C: 8,
+      D: 7, E: 6, F: 5,
+      G: 4, H: 3, K: 2,
+      L: 1
+    };
+
+    const TOP_N = 300;
+
+    const GEM_LABEL = {
+      A: 'S',
+      B: 'A',
+      C: 'B',
+      D: 'C',
+      E: 'D',
+      F: 'E',
+      G: 'F',
+      H: 'G',
+      K: 'H',
+      L: 'K'
+    };
+
+    function gemLabel(code) {
+      return GEM_LABEL[code] || code;
+    }
+
+    function rarityIcon(rarity) {
+      if (rarity === 'Legendary') return '⭐';
+      if (rarity === 'Relic') return '☾';
+      return '☀';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const icon = document.getElementById('themeIcon');
+      const text = document.getElementById('themeText');
+      if (theme === 'light') {
+        icon.textContent = '☀️';
+        text.textContent = t('light');
+      } else {
+        icon.textContent = '🌙';
+        text.textContent = t('dark');
+      }
+      localStorage.setItem('ark_theme', theme);
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem('ark_theme');
+      const theme = saved || 'dark';
+      applyTheme(theme);
+      document.getElementById('themeToggle').addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        applyTheme(cur === 'dark' ? 'light' : 'dark');
+      });
+    }
+
+    function buildCoreConfig(containerId, prefix) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 3; i++) {
+        const div = document.createElement('div');
+        div.className = 'core-config';
+        div.id = `${prefix}_corecfg_${i}`;
+        div.innerHTML = `
+      <label>${t('coreType', i)}
+        <select id="${prefix}_core${i}_rarity" class="rarity-select">
+          <option value="Legendary" selected>${t('legendaryWP')}</option>
+          <option value="Relic">${t('relicWP')}</option>
+          <option value="Ancient">${t('ancientWP')}</option>
+        </select>
+      </label>
+
+      <label class="target-wrap" id="${prefix}_core${i}_target_wrap">${t('target')}
+        <select id="${prefix}_core${i}_target">
+          ${Array.from({ length: 11 }, (_, k) => 10 + k).map(v => `<option value="${v}">${v}</option>`).join('')}
+        </select>
+      </label>
+    `;
+        container.appendChild(div);
+      }
+
+      const autoCheckbox = document.getElementById(prefix === 'class' ? 'classAuto' : 'generalAuto');
+
+      function updateVisibility() {
+        const hide = autoCheckbox.checked;
+        for (let i = 1; i <= 3; i++) {
+          const wrap = document.getElementById(`${prefix}_core${i}_target_wrap`);
+          if (wrap) wrap.style.display = hide ? 'none' : 'flex';
+        }
+        syncAccordionSummaries(prefix);
+        syncAccordionTargetVisibility(prefix, hide);
+      }
+
+      autoCheckbox.addEventListener('change', updateVisibility);
+      updateVisibility();
+
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById(`${prefix}_core${i}_rarity`).addEventListener('change', () => syncAccordionSummaries(prefix));
+        document.getElementById(`${prefix}_core${i}_target`).addEventListener('change', () => syncAccordionSummaries(prefix));
+      }
+    }
+
+    function buildCoreAccordion(containerId, prefix) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 3; i++) {
+        const d = document.createElement('details');
+        d.className = 'core-acc';
+        d.open = (i === 1);
+        d.innerHTML = `
+      <summary>
+        <span class="acc-title">${t('core')} ${i}</span>
+        <span class="acc-sub" id="${prefix}_acc_sub_${i}">—</span>
+      </summary>
+      <div class="acc-body">
+        <div class="core-config" style="display:grid; margin:0; border:none; background:transparent; padding:0;">
+          <label>${t('coreType', i)}
+            <select id="${prefix}_acc_core${i}_rarity" class="rarity-select">
+              <option value="Legendary">${t('legendaryWP')}</option>
+              <option value="Relic">${t('relicWP')}</option>
+              <option value="Ancient">${t('ancientWP')}</option>
+            </select>
+          </label>
+
+          <label class="target-wrap" id="${prefix}_acc_core${i}_target_wrap">${t('target')}
+            <select id="${prefix}_acc_core${i}_target">
+              ${Array.from({ length: 11 }, (_, k) => 10 + k).map(v => `<option value="${v}">${v}</option>`).join('')}
+            </select>
+          </label>
+        </div>
+      </div>
+    `;
+        container.appendChild(d);
+      }
+
+      for (let i = 1; i <= 3; i++) {
+        const desktopR = document.getElementById(`${prefix}_core${i}_rarity`);
+        const desktopT = document.getElementById(`${prefix}_core${i}_target`);
+        const accR = document.getElementById(`${prefix}_acc_core${i}_rarity`);
+        const accT = document.getElementById(`${prefix}_acc_core${i}_target`);
+
+        accR.value = desktopR.value;
+        accT.value = desktopT.value;
+
+        accR.addEventListener('change', () => {
+          desktopR.value = accR.value;
+          desktopR.dispatchEvent(new Event('change'));
+          syncAccordionSummaries(prefix);
+        });
+        accT.addEventListener('change', () => {
+          desktopT.value = accT.value;
+          desktopT.dispatchEvent(new Event('change'));
+          syncAccordionSummaries(prefix);
+        });
+
+        desktopR.addEventListener('change', () => { accR.value = desktopR.value; syncAccordionSummaries(prefix); });
+        desktopT.addEventListener('change', () => { accT.value = desktopT.value; syncAccordionSummaries(prefix); });
+      }
+
+      const auto = document.getElementById(prefix === 'class' ? 'classAuto' : 'generalAuto').checked;
+      syncAccordionTargetVisibility(prefix, auto);
+      syncAccordionSummaries(prefix);
+    }
+
+    function syncAccordionTargetVisibility(prefix, hide) {
+      for (let i = 1; i <= 3; i++) {
+        const wrap = document.getElementById(`${prefix}_acc_core${i}_target_wrap`);
+        if (wrap) wrap.style.display = hide ? 'none' : 'flex';
+      }
+    }
+
+    function syncAccordionSummaries(prefix) {
+      const isAuto = document.getElementById(prefix === 'class' ? 'classAuto' : 'generalAuto').checked;
+      for (let i = 1; i <= 3; i++) {
+        const rarity = document.getElementById(`${prefix}_core${i}_rarity`)?.value || 'Relic';
+        const cap = CORE_TARGET_CAP[rarity] ?? 20;
+        const ideal = CORE_IDEAL_TARGET[rarity] ?? cap;
+        const target = isAuto ? ideal : parseInt(document.getElementById(`${prefix}_core${i}_target`)?.value || `${ideal}`);
+        const shownTarget = Math.min(target, cap);
+
+        const sub = document.getElementById(`${prefix}_acc_sub_${i}`);
+        if (sub) {
+          sub.textContent = `${rarityIcon(rarity)} ${t(rarity.toLowerCase())} • ${t('target').replace(':', '')} ${shownTarget}`;
+        }
+      }
+    }
+
+    function readInventory(prefix) {
+      const inv = {};
+      for (const t of Object.keys(ASTROGEMS)) {
+        const el = document.getElementById(`${prefix}_${t}`);
+        inv[t] = Math.max(0, parseInt(el.value || '0'));
+      }
+      return inv;
+    }
+
+    function saveInventory() {
+      const data = { class: readInventory('class'), general: readInventory('general') };
+      localStorage.setItem('arkGridInventory_v5', JSON.stringify(data));
+      alert(t('inventorySaved'));
+    }
+
+    function loadInventory() {
+      const raw = localStorage.getItem('arkGridInventory_v5');
+      if (!raw) { alert(t('noSavedInventory')); return; }
+      try {
+        const obj = JSON.parse(raw);
+        for (const t of Object.keys(ASTROGEMS)) {
+          if (obj.class && obj.class[t] !== undefined) document.getElementById(`class_${t}`).value = obj.class[t];
+          if (obj.general && obj.general[t] !== undefined) document.getElementById(`general_${t}`).value = obj.general[t];
+        }
+        alert(t('inventoryLoaded'));
+      } catch (e) { alert(t('failedToLoad')); }
+    }
+
+    function resetDefaults() {
+      const sides = ['class', 'general'];
+      const gems = Object.keys(ASTROGEMS);
+      sides.forEach(side => {
+        gems.forEach(gem => {
+          const el = document.getElementById(`${side}_${gem}`);
+          if (el) el.value = 0;
+        });
+      });
+      document.getElementById('classResultsInner').innerHTML = `<div class="small">${t('dataReset')}</div>`;
+      document.getElementById('generalResultsInner').innerHTML = `<div class="small">${t('dataReset')}</div>`;
+    }
+
+    function generateCoreCombos(inv, maxWill) {
+      const types = Object.keys(ASTROGEMS);
+      const results = [];
+
+      function backtrack(start, combo, counts) {
+        if (combo.length > 0) {
+          let will = 0, points = 0;
+          for (const t of combo) { will += ASTROGEMS[t].will; points += ASTROGEMS[t].points; }
+          if (will <= maxWill) {
+            let pref = 0; for (const t of combo) pref += (GEM_WEIGHT[t] || 0);
+            results.push({ combo: combo.slice(), counts: { ...counts }, will, points, prefScore: pref });
+          }
+        }
+        if (combo.length === MAX_SLOTS) return;
+        for (let i = start; i < types.length; i++) {
+          const t = types[i];
+          const used = counts[t] || 0;
+          if (used < (inv[t] || 0)) {
+            combo.push(t);
+            counts[t] = used + 1;
+            backtrack(i, combo, counts);
+            combo.pop();
+            if (used === 0) delete counts[t]; else counts[t] = used;
+          }
+        }
+      }
+      backtrack(0, [], {});
+
+      const byPoints = {};
+      for (const r of results) {
+        if (!byPoints[r.points]) byPoints[r.points] = [];
+        byPoints[r.points].push(r);
+      }
+
+      const finalResults = [];
+      Object.keys(byPoints).sort((a, b) => b - a).forEach(pts => {
+        const group = byPoints[pts];
+        group.sort((a, b) => a.will - b.will);
+        const efficient = group.slice(0, 100);
+        const inefficient = group.slice(-50).reverse();
+        const combined = [...new Set([...efficient, ...inefficient])];
+        finalResults.push(...combined);
+      });
+
+      finalResults.sort((a, b) => (b.points - a.points) || (a.will - b.will));
+
+      return finalResults;
+    }
+
+    function optimizeThreeCores(inv, coreConfigs, isAuto) {
+      const perCoreMaxWill = coreConfigs.map(c => CORE_WILL[c.rarity]);
+
+      const combosPerCore = [];
+      for (let i = 0; i < 3; i++) {
+        combosPerCore.push(generateCoreCombos(inv, perCoreMaxWill[i]));
+      }
+      if (combosPerCore.some(list => list.length === 0)) return { best: null, reason: 'no-combos' };
+
+      const trimmed = combosPerCore.map(list => list.slice(0, TOP_N));
+      let best = null;
+
+      function fitsInventory(trioCounts, inventory) {
+        for (const t of Object.keys(ASTROGEMS)) {
+          if ((trioCounts[t] || 0) > (inventory[t] || 0)) return false;
+        }
+        return true;
+      }
+
+      const hardCaps = coreConfigs.map(c => CORE_TARGET_CAP[c.rarity] ?? 20);
+
+      const targets = coreConfigs.map((c, i) => {
+        const cap = hardCaps[i];
+        const autoTarget = CORE_IDEAL_TARGET[c.rarity] ?? cap;
+        const chosen = (isAuto ? autoTarget : (c.target ?? autoTarget));
+        return Math.min(chosen, cap);
+      });
+
+      const priorityOrder = [0, 1, 2].sort((a, b) => {
+        if (isAuto) return a - b;
+        return (targets[b] - targets[a]) || (a - b);
+      });
+
+      const [list0, list1, list2] = trimmed;
+
+      for (let i0 = 0; i0 < list0.length; i0++) {
+        const c0 = list0[i0];
+
+        for (let i1 = 0; i1 < list1.length; i1++) {
+          const c1 = list1[i1];
+
+          const partial = {};
+          for (const t of Object.keys(c0.counts || {})) partial[t] = (partial[t] || 0) + c0.counts[t];
+          for (const t of Object.keys(c1.counts || {})) partial[t] = (partial[t] || 0) + c1.counts[t];
+
+          let ok01 = true;
+          for (const t of Object.keys(partial)) {
+            if (partial[t] > (inv[t] || 0)) { ok01 = false; break; }
+          }
+          if (!ok01) continue;
+
+          for (let i2 = 0; i2 < list2.length; i2++) {
+            const c2 = list2[i2];
+
+            const combined = { ...partial };
+            for (const t of Object.keys(c2.counts || {})) combined[t] = (combined[t] || 0) + c2.counts[t];
+            if (!fitsInventory(combined, inv)) continue;
+
+            const combos = [c0, c1, c2];
+            const ach = combos.map((c, idx) => Math.min(c.points, hardCaps[idx]));
+
+            const need = ach.map((v, idx) => Math.max(0, targets[idx] - v));
+            const over = ach.map((v, idx) => Math.max(0, v - targets[idx]));
+
+            const totalPts = ach[0] + ach[1] + ach[2];
+            const pref = (c0.prefScore || 0) + (c1.prefScore || 0) + (c2.prefScore || 0);
+            const totalWill = (c0.will || 0) + (c1.will || 0) + (c2.will || 0);
+
+            const key = [
+              ...priorityOrder.map(i => need[i]),
+              ...priorityOrder.map(i => -over[i]),
+              -totalPts,
+              -pref,
+              totalWill
+            ];
+
+            const candidate = {
+              combos: combos,
+              counts: combined,
+              ptsRaw: [c0.points, c1.points, c2.points],
+              will: [c0.will, c1.will, c2.will],
+              key
+            };
+
+            if (!best) { best = candidate; continue; }
+
+            let better = false;
+            for (let k = 0; k < key.length; k++) {
+              if (key[k] < best.key[k]) { better = true; break; }
+              if (key[k] > best.key[k]) break;
+            }
+            if (better) best = candidate;
+          }
+        }
+      }
+
+      return { best };
+    }
+
+    function readCoreConfigs(prefix) {
+      const arr = [];
+      const isAuto = document.getElementById(prefix === 'class' ? 'classAuto' : 'generalAuto').checked;
+      for (let i = 1; i <= 3; i++) {
+        const rarity = document.getElementById(`${prefix}_core${i}_rarity`).value;
+        const cap = CORE_TARGET_CAP[rarity] ?? 20;
+
+        const ideal = CORE_IDEAL_TARGET[rarity] ?? cap;
+        const target = isAuto ? ideal : parseInt(document.getElementById(`${prefix}_core${i}_target`).value);
+
+        arr.push({ rarity, target: Math.min(target, cap) });
+      }
+      return arr;
+    }
+
+    function buildGemCards(combo) {
+      return combo.map(t => {
+        const c = t.toUpperCase();
+        const info = ASTROGEMS[c];
+        return `<div class="gem-card gem-${c}">
+      <div class="gem-type">${gemLabel(c)}</div>
+      <div class="gem-sub">${info.points}★ ${info.will}W</div>
+    </div>`;
+      }).join('');
+    }
+
+    function computeRemaining(inv, used) {
+      const rem = {};
+      for (const t of Object.keys(ASTROGEMS)) rem[t] = (inv[t] || 0) - (used[t] || 0);
+      return rem;
+    }
+
+    function rarityIconSVG(rarity) {
+      if (rarity === 'Legendary') {
+        return `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2.6l2.62 5.68 6.2.56-4.7 4.1 1.4 6.05L12 15.9 6.48 19l1.4-6.05-4.7-4.1 6.2-.56L12 2.6z"/>
+    </svg>`;
+      }
+      if (rarity === 'Ancient') {
+        return `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6z"/>
+      <path d="M12 2.2v2.2M12 19.6v2.2M2.2 12h2.2M19.6 12h2.2M4.1 4.1l1.55 1.55M18.35 18.35l1.55 1.55M19.9 4.1l-1.55 1.55M5.65 18.35l-1.55 1.55"
+            fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>`;
+      }
+      return `<svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M15.6 3.2c-4.1 1.1-7.1 4.9-7.1 9.4 0 4.7 3.2 8.6 7.7 9.5-1.1.5-2.4.8-3.7.8-4.9 0-8.9-4-8.9-8.9 0-4.4 3.2-8 7.4-8.7.5-.1 1-.1 1.5-.1-.3.2-.6.0-.9 0z"/>
+  </svg>`;
+    }
+
+    function getTargets(coreConfigs, isAuto) {
+      const hardCaps = coreConfigs.map(c => CORE_TARGET_CAP[c.rarity] ?? 20);
+      return coreConfigs.map((c, i) => {
+        const cap = hardCaps[i];
+        const autoTarget = CORE_IDEAL_TARGET[c.rarity] ?? cap;
+        const chosen = isAuto ? autoTarget : (c.target ?? autoTarget);
+        return Math.min(chosen, cap);
+      });
+    }
+
+    function getAchievedPoints(best, coreConfigs) {
+      const hardCaps = coreConfigs.map(c => CORE_TARGET_CAP[c.rarity] ?? 20);
+      return best.combos.map((c, i) => Math.min(c.points, hardCaps[i]));
+    }
+
+    function meetsAllTargets(best, coreConfigs, isAuto) {
+      const targets = getTargets(coreConfigs, isAuto);
+      const achieved = getAchievedPoints(best, coreConfigs);
+      return achieved.every((v, i) => v >= targets[i]);
+    }
+
+    const CRAFT_CANDIDATES = Object.keys(ASTROGEMS);
+
+    function suggestCraftAdditions(inv, coreConfigs, isAuto, maxExtra = 8) {
+      const base = optimizeThreeCores(inv, coreConfigs, isAuto);
+      if (base?.best && meetsAllTargets(base.best, coreConfigs, isAuto)) {
+        return { adds: null, solved: true, usedN: 0 };
+      }
+
+      const targets = getTargets(coreConfigs, isAuto);
+
+      function computeOverSum(best) {
+        const achieved = getAchievedPoints(best, coreConfigs);
+        return achieved.reduce((acc, v, i) => acc + Math.max(0, v - targets[i]), 0);
+      }
+
+      function computeAddStats(adds) {
+        let addWill = 0, addPts = 0;
+        for (const [t, c] of Object.entries(adds)) {
+          addWill += (ASTROGEMS[t]?.will || 0) * c;
+          addPts += (ASTROGEMS[t]?.points || 0) * c;
+        }
+        return { addWill, addPts };
+      }
+
+      for (let n = 1; n <= maxExtra; n++) {
+        const adds = {};
+        let bestAdds = null;
+        let bestKey = null;
+
+        function consider() {
+          const inv2 = { ...inv };
+          for (const t in adds) inv2[t] = (inv2[t] || 0) + adds[t];
+
+          const res = optimizeThreeCores(inv2, coreConfigs, isAuto);
+          if (!res?.best) return;
+          if (!meetsAllTargets(res.best, coreConfigs, isAuto)) return;
+
+          const overSum = computeOverSum(res.best);
+          const { addWill, addPts } = computeAddStats(adds);
+
+          const key = [overSum, addWill, addPts];
+
+          if (!bestKey) {
+            bestKey = key;
+            bestAdds = { ...adds };
+            return;
+          }
+
+          for (let i = 0; i < key.length; i++) {
+            if (key[i] < bestKey[i]) { bestKey = key; bestAdds = { ...adds }; return; }
+            if (key[i] > bestKey[i]) return;
+          }
+        }
+
+        function dfs(startIdx, left) {
+          if (left === 0) {
+            consider();
+            return;
+          }
+          for (let i = startIdx; i < CRAFT_CANDIDATES.length; i++) {
+            const t = CRAFT_CANDIDATES[i];
+            adds[t] = (adds[t] || 0) + 1;
+            dfs(i, left - 1);
+            adds[t]--;
+            if (adds[t] === 0) delete adds[t];
+          }
+        }
+
+        dfs(0, n);
+
+        if (bestAdds) {
+          return { adds: bestAdds, solved: true, usedN: n };
+        }
+      }
+
+      return { adds: null, solved: false, usedN: null };
+    }
+
+    function renderAddsPills(adds) {
+      const entries = Object.entries(adds || {})
+        .filter(([t, c]) => (c || 0) > 0);
+
+      if (entries.length === 0) return '';
+
+      const order = Object.keys(ASTROGEMS);
+      entries.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]));
+      // entries.sort((a,b)=>b[1]-a[1]);
+
+      return `<div class="suggest-row">
+    ${entries.map(([t, c]) => `
+      <div class="suggest-pill">
+        <span class="gem-dot gem-${t}">${gemLabel(t)}</span>
+        <span class="qty">×${c}</span>
+      </div>
+    `).join('')}
+  </div>`;
+    }
+
+    function renderResults(containerId, resultObj, inv, coreConfigs, isAuto) {
+      const container = document.getElementById(containerId);
+      if (!resultObj || !resultObj.best) {
+        container.innerHTML = `<div class="small">${t('noValidCombos')}</div>`;
+        return;
+      }
+
+      const best = resultObj.best;
+      let html = '';
+
+      for (let i = 0; i < 3; i++) {
+        const c = best.combos[i];
+
+        const rarity = coreConfigs?.[i]?.rarity || 'Relic';
+        const cap = CORE_TARGET_CAP[rarity] ?? 20;
+        const autoTarget = CORE_IDEAL_TARGET[rarity] ?? cap;
+        const target = isAuto ? autoTarget : (coreConfigs?.[i]?.target ?? autoTarget);
+
+        const shownTarget = Math.min(target, cap);
+        const shownPts = Math.min(c.points, cap);
+        const pct = shownTarget > 0 ? Math.min(100, Math.round((shownPts / shownTarget) * 100)) : 0;
+
+        html += `<div class="core-box">
+      <div class="core-header">
+
+        <div class="core-left">
+          <div class="core-coin coin-${rarity}">
+            ${rarityIconSVG(rarity)}
+          </div>
+
+          <div class="core-title">
+            <div class="core-title-row">
+              <span class="core-kicker">${t('core')} ${i + 1}</span>
+
+              <span class="rarity-pill pill-${rarity}">
+                ${t(rarity.toLowerCase())}
+              </span>
+
+              <span class="core-gems">
+                (${c.counts ? Object.values(c.counts).reduce((a, b) => a + b, 0) : c.combo.length} ${t('gem').toLowerCase()}${c.combo.length > 1 ? 'ов' : ''})
+              </span>
+            </div>
+
+            <div class="core-sub">
+              ${t('willpowerCap')} ${CORE_WILL[rarity] ?? c.will} ${t('wpLabel').replace(':', '')}
+            </div>
+          </div>
+        </div>
+
+        <div class="meta-right">
+          <div class="small" style="color:var(--text-main); margin:0;">
+            ${t('wpLabel')} ${c.will} &nbsp;•&nbsp; ${t('ptsLabel')} ${shownPts} / ${t('targetLabel')} ${shownTarget}
+          </div>
+          <div class="progress-wrap" aria-label="Target progress">
+            <div class="progress-bar" style="width:${pct}%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gem-row">${buildGemCards(c.combo)}</div>
+    </div>`;
+      }
+
+      const remaining = computeRemaining(inv, best.counts);
+      const unusedPills = renderAddsPills(remaining);
+
+      html += `
+    <details class="unused-block">
+      <summary>
+        <span class="unused-title"><span class="sigil">✦</span> ${t('unusedGems')}</span>
+        <span class="unused-hint">${unusedPills ? t('tapToExpand') : t('none')}</span>
+      </summary>
+      <div>${unusedPills || `<span class="small">${t('none')}</span>`}</div>
+    </details>
+  `;
+
+      const targets = getTargets(coreConfigs, isAuto);
+      const achieved = getAchievedPoints(best, coreConfigs);
+      const missing = achieved.map((v, i) => Math.max(0, targets[i] - v));
+      const totalMissing = missing.reduce((a, b) => a + b, 0);
+
+      if (totalMissing > 0) {
+        const suggestion = suggestCraftAdditions(inv, coreConfigs, isAuto, 8);
+        if (suggestion.solved && suggestion.adds) {
+          html += `
+        <div class="unused-block" style="margin-top:12px;">
+          <div class="unused-title" style="margin-bottom:8px;">
+            <span class="sigil">✦</span> ${t('craftSuggestionReach')}
+          </div>
+          <div class="small" style="color:var(--text-main); margin-top:0;">
+            ${t('missing')} ${missing.map((m, i) => `${t('core')} ${i + 1}: ${m}`).join(' • ')}
+          </div>
+
+          ${renderAddsPills(suggestion.adds)}
+
+          <div class="small" style="margin-top:8px;">
+            (${t('minimalAddSearch')})
+          </div>
+        </div>
+      `;
+        } else {
+          html += `
+        <div class="unused-block" style="margin-top:12px;">
+          <div class="unused-title"><span class="sigil">✦</span> ${t('craftSuggestion')}</div>
+          <div class="small" style="margin-top:8px;">
+            ${t('couldntGuarantee')}
+          </div>
+        </div>
+      `;
+        }
+      }
+
+      container.innerHTML = html;
+    }
+
+    function calculateClass() {
+      const inv = readInventory('class');
+      const cfg = readCoreConfigs('class');
+      const auto = document.getElementById('classAuto').checked;
+      const res = optimizeThreeCores(inv, cfg, auto);
+      renderResults('classResultsInner', res, inv, cfg, auto);
+    }
+
+    function calculateGeneral() {
+      const inv = readInventory('general');
+      const cfg = readCoreConfigs('general');
+      const auto = document.getElementById('generalAuto').checked;
+      const res = optimizeThreeCores(inv, cfg, auto);
+      renderResults('generalResultsInner', res, inv, cfg, auto);
+    }
+
+    function calculateBoth() {
+      calculateClass();
+      calculateGeneral();
+    }
+
+    function updateAllText() {
+      document.querySelector('h1').textContent = t('appTitle');
+      const noteEl = document.querySelector('.note');
+      noteEl.innerHTML = `${t('subtitle')} <a href="${t('readmeUrl')}" class="how-to-use" target="_blank">${t('howToUse')}</a>`;
+
+      const sectionTitles = document.querySelectorAll('.section-title');
+      sectionTitles[0].textContent = t('orderSection');
+      sectionTitles[1].textContent = t('chaosSection');
+
+      const headers = ['gem', 'will', 'pts', 'qty'];
+      document.querySelectorAll('thead th').forEach((th, i) => {
+        th.textContent = t(headers[i % 4]);
+      });
+
+      const classAutoLabel = document.querySelector('label[for="classAuto"]') ||
+        Array.from(document.querySelectorAll('label')).find(l => l.querySelector('#classAuto'));
+      const generalAutoLabel = document.querySelector('label[for="generalAuto"]') ||
+        Array.from(document.querySelectorAll('label')).find(l => l.querySelector('#generalAuto'));
+
+      if (classAutoLabel) {
+        const input = classAutoLabel.querySelector('input');
+        classAutoLabel.textContent = '';
+        classAutoLabel.appendChild(input);
+        classAutoLabel.appendChild(document.createTextNode(' ' + t('autoTarget')));
+      }
+
+      if (generalAutoLabel) {
+        const input = generalAutoLabel.querySelector('input');
+        generalAutoLabel.textContent = '';
+        generalAutoLabel.appendChild(input);
+        generalAutoLabel.appendChild(document.createTextNode(' ' + t('autoTarget')));
+      }
+
+      const hints = document.querySelectorAll('.small');
+      [0, 1].forEach(i => {
+        if (hints[i] && hints[i].textContent.includes('Auto uses') || hints[i].textContent.includes('Авто использует')) {
+          hints[i].textContent = t('autoTargetHint');
+        }
+      });
+
+      const calcButtons = document.querySelectorAll('.panel-btn-row button');
+      calcButtons.forEach(btn => { btn.textContent = t('calculate'); });
+
+      const commonButtons = document.querySelectorAll('.common-controls button');
+      if (commonButtons[0]) commonButtons[0].textContent = t('saveInventory');
+      if (commonButtons[1]) commonButtons[1].textContent = t('loadInventory');
+      if (commonButtons[2]) commonButtons[2].textContent = t('resetData');
+      if (commonButtons[3]) commonButtons[3].textContent = t('calculateBoth');
+
+      const resTitles = document.querySelectorAll('.res-title');
+      if (resTitles[0]) resTitles[0].textContent = t('orderOptimization');
+      if (resTitles[1]) resTitles[1].textContent = t('chaosOptimization');
+
+      const resInners = document.querySelectorAll('[id$="ResultsInner"]');
+      resInners.forEach(inner => {
+        if (inner.textContent.includes('Pending') || inner.textContent.includes('Ожидание')) {
+          inner.innerHTML = `<div class="small">${t('pendingCalculation')}</div>`;
+        }
+      });
+
+      document.getElementById('langText').textContent = currentLang.toUpperCase();
+
+      const themeText = document.getElementById('themeText');
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      themeText.textContent = currentTheme === 'dark' ? t('dark') : t('light');
+
+      buildCoreConfig('class_core_config', 'class');
+      buildCoreConfig('general_core_config', 'general');
+      buildCoreAccordion('class_core_accordion', 'class');
+      buildCoreAccordion('general_core_accordion', 'general');
+    }
+
+    window.onload = function () {
+      initTheme();
+
+      buildCoreConfig('class_core_config', 'class');
+      buildCoreConfig('general_core_config', 'general');
+
+      buildCoreAccordion('class_core_accordion', 'class');
+      buildCoreAccordion('general_core_accordion', 'general');
+
+      document.querySelectorAll('table tbody .gem-dot').forEach(el => {
+        const code = (el.textContent || '').trim().toUpperCase();
+        el.textContent = gemLabel(code);
+      });
+
+      document.getElementById('langToggle').addEventListener('click', () => {
+        setLanguage(currentLang === 'en' ? 'ru' : 'en');
+      });
+
+      document.documentElement.lang = currentLang;
+      updateAllText();
+
+      calculateBoth();
+    };
+  </script>
+</body>
+
+</html>
